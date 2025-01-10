@@ -1,0 +1,21 @@
+1. Setting Up Environment Variables
+- Goal: Configure the .env file with required credentials
+- Requirements: Access to Convex dashboard and OpenAI account
+- Expected Behavior: Application connects to required services
+- Files to modify: .env
+
+2. Convex Configuration
+- Go to your Convex dashboard
+- Create a new project if you haven't already
+- Copy the deployment URL
+- Set as NEXT_PUBLIC_CONVEX_URL in .env
+
+3. OpenAI Configuration
+- Go to platform.openai.com
+- Create API key in your account settings
+- Set as OPENAI_API_KEY in .env
+
+4. Authentication Configuration
+- Generate a secure random string for NEXTAUTH_SECRET
+  (can use openssl rand -base64 32 or online generator)
+- Set NEXTAUTH_URL to your production URL when deploying
