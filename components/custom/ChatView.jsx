@@ -9,9 +9,9 @@ import axios from 'axios';
 import { useConvex, useMutation } from 'convex/react';
 import { ArrowRight, Link, Loader2Icon } from 'lucide-react';
 import Image from 'next/image';
-import { useParams } from 'next/navigation'
-import React, { useContext, useEffect, useState } from 'react'
-import ReactMarkdown from 'react-markdown'
+import { useParams } from 'next/navigation';
+import React, { useContext, useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { useSidebar } from '../ui/sidebar';
 import { toast } from 'sonner';
 
@@ -37,9 +37,6 @@ function ChatView() {
     }
   }, [id]);
 
-  /**
-   * Reads a file as a Base64 data URL
-   */
   const readFileAsync = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -49,9 +46,6 @@ function ChatView() {
     });
   };
 
-  /**
-   * Used to Get Workspace data using Workspace ID
-   */
   const GetWorkspaceData = async () => {
     const result = await convex.query(api.workspace.GetWorkspace, {
       workspaceId: id
@@ -74,19 +68,17 @@ function ChatView() {
     try {
       let pdfContext = "";
       if (pdfFile) {
-        // Read the PDF file and store its content in pdfContext
         pdfContext = await readFileAsync(pdfFile);
+        console.log("PDF Context length:", pdfContext.length);
       }
 
-      // Prepend PDF context to prompt if available
       const PROMPT = 
         (pdfContext ? `PDF Content: ${pdfContext}\n` : "") + 
         JSON.stringify(messages) + 
         Prompt.CHAT_PROMPT;
+      console.log("Generated Prompt (preview):", PROMPT.slice(0, 500));
 
-      const result = await axios.post('/api/ai-chat', {
-        prompt: PROMPT
-      });
+      const result = await axios.post('/api/ai-chat', { prompt: PROMPT });
 
       const aiResp = {
         role: 'ai',
@@ -100,15 +92,11 @@ function ChatView() {
       });
 
       const token = Number(userDetail?.token) - Number(countToken(JSON.stringify(aiResp)));
-      setUserDetail(prev => ({
-        ...prev,
-        token: token
-      }));
+      setUserDetail(prev => ({ ...prev, token }));
 
-      // Update Tokens in Database 
       await UpdateTokens({
         userId: userDetail?._id,
-        token: token
+        token
       });
 
       setLoading(false);
@@ -203,7 +191,9 @@ function ChatView() {
               accept=".pdf"
               onChange={(e) => {
                 if (e.target.files && e.target.files[0]) {
-                  setPdfFile(e.target.files[0]);
+                  const file = e.target.files[0];
+                  console.log("Selected PDF file in ChatView:", file);
+                  setPdfFile(file);
                 }
               }}
             />
